@@ -185,6 +185,7 @@ impl SimpleAsyncComponent for Settings {
                         },
                         gtk::Button {
                             set_label: "Create profile",
+                            set_margin_top: 5,
                             connect_clicked => SettingsInput::ManageProfiles(ProfileManagementAction::CreateProfile),
                         },
                     },
@@ -284,7 +285,7 @@ impl SimpleAsyncComponent for Settings {
                         sender.input(SettingsInput::SetUpdating(false));
                     });
                 }
-                ProfileManagementAction::MoveProfileUp(idx) => {
+                ProfileManagementAction::MoveProfileDown(idx) => {
                     let idx = idx.current_index();
                     let new_idx = idx + 1;
                     if new_idx < self.profiles.guard().len() {
@@ -300,7 +301,7 @@ impl SimpleAsyncComponent for Settings {
                         });
                     }
                 }
-                ProfileManagementAction::MoveProfileDown(idx) => {
+                ProfileManagementAction::MoveProfileUp(idx) => {
                     let idx = idx.current_index();
                     if idx > 0 {
                         let new_idx = idx - 1;
@@ -471,6 +472,8 @@ impl FactoryComponent for ProfileFactoryRenderer {
             set_orientation: gtk::Orientation::Horizontal,
             set_align: gtk::Align::Center,
             set_spacing: 10,
+            set_margin_top: 5,
+            set_margin_bottom: 5,
 
             gtk::EditableLabel {
                 #[watch]
@@ -483,13 +486,13 @@ impl FactoryComponent for ProfileFactoryRenderer {
                 } @changed_handler
             },
             gtk::Button {
-                set_label: "Up",
+                set_icon_name: "go-up",
                 connect_clicked[sender, index] => move |_| {
                     sender.output(ProfileManagementAction::MoveProfileUp(index.clone()).into()).unwrap();
                 }
             },
             gtk::Button {
-                set_label: "Down",
+                set_icon_name: "go-down",
                 connect_clicked[sender, index] => move |_| {
                     sender.output(ProfileManagementAction::MoveProfileDown(index.clone()).into()).unwrap();
                 }
